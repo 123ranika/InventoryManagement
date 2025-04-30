@@ -30,34 +30,56 @@ namespace InventoryManagement.Areas.Admin.Controllers
             {
                 return Json(null);
             }
+            try
+            {
+                var references = _context.Clients
+                    .Where(x => x.Phone.StartsWith(phone))
+                    .Select(x => new
+                    {
+                        x.ClientID,
+                        x.ClientName,
+                        x.Phone,
+                        x.Address
+                    })
+                    .Take(5)
+                    .ToList();
 
-            var clients = _context.Clients
-                .Where(c => c.Phone.StartsWith(phone))
-                .Select(c => new
-                {
-                    clientName = c.ClientName,
-                    clientAddress = c.Address,
-                    phone = c.Phone
-                })
-                .ToList(); // Important: ToList to return multiple results
-
-            return Json(clients);
+                return Json(new { success = true, references });
+            }
+            catch
+            {
+                return Json(new { success = false, message = "Error"});
+            }
         }
-
-        [HttpGet("/Invoice/SearchProductByName")]
-        public IActionResult SearchProductByName(string name)
+        [HttpGet("SearchProductByName")]
+        public IActionResult SearchProductByName(string description)
         {
-            var matches = _context.Products
-                .Where(p => p.ProductName != null && p.ProductName.Contains(name))
-                .Select(p => new {
-                    id = p.ProductID,
-                    productName = p.ProductName,
-                    price = p.Price
-                })
-                .ToList();
+            if (string.IsNullOrEmpty(description) || description.Length < 4)
+            {
+                return Json(null);
+            }
+            try
+            {
+                var references = _context.Products
+                    .Where(x => x.ProductName.StartsWith(description))
+                    .Select(x => new
+                    {
+                        x.ProductID,
+                        x.ProductName,
+                        x.Price,
+                    })
+                    .Take(5)
+                    .ToList();
 
-            return Json(matches);
+                return Json(new { success = true, references });
+            }
+            catch
+            {
+                return Json(new { success = false, message = "Error"});
+            }
         }
+
+       
     }
 }
 
