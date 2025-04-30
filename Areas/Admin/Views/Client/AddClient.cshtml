@@ -1,0 +1,47 @@
+﻿@model InventoryManagement.DataModel.Clients
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Client";
+}
+
+
+<div class="card card-primary mt-4 mx-auto" style="max-width: 600px;">
+    <div class="card-header" style="background-color:#717171">
+        <h3 class="card-title text-white">Create Client</h3>
+    </div>
+
+    <!-- Correct form routing -->
+    <form action="AddClientSubmit" controller="Client" method="post">
+        <div class="card-body">
+
+            <div class="mb-3">
+                <input asp-for="ClientName" id="ClientName" name="ClientName" class="form-control" placeholder="Enter client name" />
+                <span asp-validation-for="ClientName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <input asp-for="Phone" id="Phone" name="Phone" class="form-control" placeholder="Enter phone number" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <input asp-for="Email" id="Email" name="Email" type="email" class="form-control" placeholder="Enter email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">      
+                <input asp-for="Address" id="Address" name="Address" class="form-control" placeholder="Enter address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary" style="background-color:#717171">Submit</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

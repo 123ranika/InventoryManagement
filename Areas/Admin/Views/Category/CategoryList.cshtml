@@ -1,0 +1,42 @@
+﻿@model IEnumerable<InventoryManagement.DataModel.Categorys>
+
+@{
+    ViewData["Title"] = "CategoryList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card card-primary">
+    <div class="card-header" style="background-color:#717171">
+        <h3 class="card-title">Category List</h3>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    CategoryName
+                </th>
+          
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>                 
+                    <td>
+                        @item.CategoryName
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.CategoryID" class="btn btn-sm btn-warning me-2">Edit</a>
+                        <a href="@Url.Action("DeleteCategory", "Category", new { id = @item.CategoryID })" asp-action="Delete" asp-route-id="@item.CategoryID" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<InventoryManagement.DataModel.Clients>
+
+@{
+    ViewData["Title"] = "VendorList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card card-primary">
+    <div class="card-header" style="background-color:#717171">
+        <h3 class="card-title">Client List</h3>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.ClientName
+                    </td>
+                    <td>
+                        @item.Phone
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @item.Address
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ClientID" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="@Url.Action("DeleteClient", "Client", new { id = @item.ClientID })" asp-action="Delete" asp-route-id="@item.ClientID" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

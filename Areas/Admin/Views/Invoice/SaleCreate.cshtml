@@ -1,0 +1,491 @@
+﻿@model InventoryManagement.DataModel.Invoices
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Invoice View";
+}
+
+<div class="col-md-12 ">
+    <form id="invoiceForm">
+        <div class="row">
+            <div class="col-12 px-4">
+                <div class="card">
+                    <div class="card-header bg-info">
+                        <h6 class="mb-0 text-white">Customer Details</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Phone -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="Phone">Phone<span>*</span></label>
+                                    <input type="text" class="form-control" id="Phone" autocomplete="off" placeholder="Enter Phone Number" required onkeyup="SearchClientByPhone()" />
+                                    <div id="suggestions" style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc; display: none;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Name -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="Name">Name</label>
+                                    <input type="hidden" id="CustomerId">
+                                    <input type="text" class="form-control" id="Name" placeholder="Enter Customer Name" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="Address">Address</label>
+                                    <input type="text" class="form-control" id="Address" placeholder="Enter Address">
+                                </div>
+                            </div>
+
+                            <!-- Invoice ID -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="Slip">Slip Number</label>
+                                    <input type="number" class="form-control" id="Slip" name="Slip" value="@DateTime.Now.ToString("yyyyMMddHHmmss")" placeholder="Enter Invoice ID" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Date and Product Name -->
+                        <div class="row">
+                            <!-- Date -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="Date">Date</label>
+                                    <input type="date" class="form-control" id="Date" value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                                </div>
+                            </div>
+
+                            <!-- Product Name -->
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label for="ProductName">Product Name<span>*</span></label>
+                                    <input name="Description" id="ProductName" class="form-control" placeholder="Add Product" autocomplete="off" />
+                                    <div id="product-suggestions" style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc; display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Optional: Unit Price -->                      
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 px-3">
+        <div class="card">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-start">
+                    <span>Invoice Items</span>
+                    <button type="button" class="btn btn-danger btn-sm">Add Item</button>
+                </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <!-- Product Description -->
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="ProductDescription">Product Name<span class="text-danger"></span></label>
+                            <input type="text" class="form-control" id="ProductDescription" placeholder="Add Product Description" required>
+                        </div>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="Quantity">Quantity<span class="text-danger"></span></label>
+                            <input type="number" class="form-control" id="Quantity" value="1" required>
+                        </div>
+                    </div>
+
+                    <!-- Unit Price -->
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="UnitPrice">Unit Price<span class="text-danger"></span></label>
+                            <input type="number" class="form-control" id="UnitPrice" required>
+                        </div>
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label for="Discount">Discount</label>
+                            <input type="number" class="form-control" id="Discount">
+                        </div>
+                    </div>
+
+                    <!-- Total Price (Read-only) -->
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label for="TotalPrice">Total</label>
+                            <input type="text" class="form-control bg-light" id="TotalPrice" value="0" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Invoice Items -->
+    </form>
+    <div class="row mt-4">
+        <div class="col-12 px-4">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-info">
+                            <h6 class="mb-0  text-white">Order List</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th scope="col" style="width: 30%;">Product Name</th>
+                                            <th scope="col" style="width: 10%;">Quantity</th>
+                                            <th scope="col" style="width: 10%;">Price</th>
+                                            <th scope="col" style="width: 10%;">Discount</th>
+                                            <th scope="col" style="width: 10%;">Total</th>
+                                            <th scope="col" style="width: 10%;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="items-container">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-info">
+                            <h6 class="mb-0 text-white">Order Summary</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="subtotal" class="mb-0">Subtotal(without Discount):</label>
+                                    <input type="text" id="subtotal" class="form-control text-end" placeholder="0.00" readonly style="max-width: 120px;">
+                                </div>
+                            </div>
+                            <div class="form-group mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="totalDiscount" class="mb-0">Total Discount:</label>
+                                    <input type="text" id="totalDiscount" class="form-control text-end" placeholder="0.00" readonly style="max-width: 120px;">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="ManualDiscount" class="mb-0">Discount:</label>
+                                    <input type="text" name="ManualDiscount" id="ManualDiscount" class="form-control text-end" style="max-width: 120px;">
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="grandTotal" class="fw-bold mb-0">Grand Total:</label>
+                                    <input type="text" id="grandTotal" class="form-control text-end fw-bold" placeholder="0.00" readonly style="max-width: 120px;">
+                                </div>
+                            </div>
+                            <div class="form-group mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="Due" class="fw-bold mb-0">Due(Amount):</label>
+                                    <input type="text" name="Due" id="Due" class="form-control text-end" style="max-width: 120px;">
+                                </div>
+                            </div>
+                            <div class="form-group mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="Paid" class="fw-bold mb-0">Paid:</label>
+                                    <input type="text" name="Paid" id="Paid" class="form-control text-end fw-bold" placeholder="0.00" readonly style="max-width: 120px;">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="fw-bold mb-2">Payment Method:<sup><span>*</span></sup></label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="cashPayment" value="Cash">
+                                        <label class="form-check-label" for="cashPayment">
+                                            Cash
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="cardPayment" value="Card">
+                                        <label class="form-check-label" for="bankPayment">
+                                            Card
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="bankPayment" value="Bank">
+                                        <label class="form-check-label" for="bankPayment">
+                                            Bank
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="bkashPayment" value="Bkash">
+                                        <label class="form-check-label" for="bkashPayment">
+                                            Bkash
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="nogodPayment" value="Nogod">
+                                        <label class="form-check-label" for="nogodPayment">
+                                            Nogod
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="rocketPayment" value="Rocket">
+                                        <label class="form-check-label" for="rocketPayment">
+                                            Rocket
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3 d-flex justify-content-center">
+                                <button type="button" id="SaveButton" class="btn btn-success me-2 flex-grow-1">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function SearchClientByPhone() {
+            let phoneInput = document.getElementById("Phone").value.trim();
+            const suggestionsDiv = document.getElementById("suggestions");
+
+            if (phoneInput.length >= 4) {
+                $.ajax({
+                    url: "/Invoice/SearchClientByPhone",
+                    type: "GET",
+                    data: { phone: phoneInput },
+                    success: function (data) {
+                        suggestionsDiv.innerHTML = "";
+                        suggestionsDiv.style.display = "block";
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(function (client) {
+                                const suggestionItem = document.createElement("div");
+                                suggestionItem.classList.add("suggestion-item");
+                                suggestionItem.textContent = `${client.clientName} - ${client.clientAddress} - ${client.phone}`;
+
+                                suggestionItem.addEventListener("click", function () {
+                                    document.getElementById("Name").value = client.clientName || "";
+                                    document.getElementById("Address").value = client.clientAddress || "";
+                                    document.getElementById("Phone").value = client.phone || "";
+                                    suggestionsDiv.style.display = "none";
+                                });
+
+                                suggestionsDiv.appendChild(suggestionItem);
+                            });
+                        } else {
+                            const noResultItem = document.createElement("div");
+                            noResultItem.classList.add("no-result-item");
+                            noResultItem.textContent = "No Client Found.";
+                            suggestionsDiv.appendChild(noResultItem);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching client data:', error);
+                    }
+                });
+            } else {
+                suggestionsDiv.innerHTML = "";
+                suggestionsDiv.style.display = "none";
+            }
+        }
+
+        // Hide suggestions when clicked outside
+        document.addEventListener("click", function (event) {
+            const suggestionsDiv = document.getElementById("suggestions");
+            if (!document.getElementById("Phone").contains(event.target) && !suggestionsDiv.contains(event.target)) {
+                suggestionsDiv.style.display = "none";
+            }
+        });
+
+        // Style for suggestions
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .suggestion-item {
+                padding: 8px;
+                cursor: pointer;
+                border-bottom: 1px solid #eee;
+                background-color: white;
+            }
+            .suggestion-item:hover {
+                background-color: #f0f0f0;
+            }
+            .no-result-item {
+                padding: 8px;
+                color: red;
+                background-color: white;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // ✅ Fix: moved function declaration outside debounce
+                  function populateProductSuggestion(item) {
+            $('#ProductName').val('');
+            $('#ProductId').val('0');
+            $('#UnitPrice').val(0);
+            $('#product-suggestions').hide();
+
+            const unitPrice = parseFloat(item.unitPrice || 0);
+            const discount = 0;
+
+            // Check if product already exists in table
+            const $existingRow = $(`#items-container tr[data-id="${item.id}"]`);
+
+            if ($existingRow.length > 0) {
+                // Product exists: increment quantity and update total
+                let currentQty = parseInt($existingRow.find('.quantity').val()) || 0;
+                currentQty += 1;
+                $existingRow.find('.quantity').val(currentQty);
+
+                const newTotal = (unitPrice - discount) * currentQty;
+                $existingRow.find('.total-price').text(newTotal.toFixed(2));
+            } else {
+                // Product does not exist: add new row
+                const row = `
+                    <tr data-id="${item.id}">
+                        <td class="product-name">${item.productName}</td>
+                        <td><input type="number" class="form-control quantity" value="1" min="1"></td>
+                        <td class="unit-price">${unitPrice}</td>
+                        <td><input type="number" class="form-control discount-input" value="${discount}" step="0.01" min="0"></td>
+                        <td class="total-price">${(unitPrice - discount).toFixed(2)}</td>
+                        <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+                    </tr>
+                `;
+                $('#items-container').prepend(row);
+            }
+
+            calculateTotals(); // ✅ Recalculate totals after update
+        }
+
+
+            var calculateTotals = function () {
+                var subtotal = 0, totalUnitPrice = 0;
+
+                $('#items-container tr').each(function () {
+                    var unitPrice = parseFloat($(this).find('.unit-price').text()) || 0;
+                    var quantity = parseInt($(this).find('.quantity').val()) || 1;
+                    var discount = parseFloat($(this).find('.discount-input').val()) || 0;
+
+                    var totalPrice = (unitPrice - discount) * quantity;
+
+                    subtotal += totalPrice;
+                    totalUnitPrice += unitPrice * quantity;
+
+                    $(this).find('.total-price').text(totalPrice.toFixed(2));
+                });
+
+                var manualDiscount = parseFloat($('#ManualDiscount').val()) || 0;
+                var totalDiscount = (totalUnitPrice - subtotal) + manualDiscount;
+
+                $('#subtotal').val(subtotal.toFixed(2));
+                $('#totalDiscount').val(totalDiscount.toFixed(2));
+
+                var grandTotal = subtotal - manualDiscount;
+                grandTotal = Math.round(grandTotal);
+
+                $('#grandTotal').val(grandTotal.toFixed(2));
+                $('#payAmount').val(grandTotal.toFixed(2)).trigger('input');
+            };
+
+
+            function debounce(func, delay) {
+                let timeoutId;
+                return function (...args) {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            const fetchProductSuggestions = debounce(function (productName) {
+                if (productName.length < 2) {
+                    $('#product-suggestions').hide();
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Invoice/SearchProductByName',
+                    type: 'GET',
+                    data: { name: productName },
+                    success: function (data) {
+                        const $suggestionsDiv = $('#product-suggestions');
+                        $suggestionsDiv.empty().hide();
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(function (item) {
+                                const $item = $(`<div class="suggestion-item"
+                                    style="padding: 5px; cursor: pointer;"
+                                    data-id="${item.id}"
+                                    data-product-name="${item.productName}"
+                                    data-unit-price="${item.price}">
+                                    ${item.productName} - ${item.price}
+                                </div>`);
+
+                                $item.on('click', function () {
+                                    populateProductSuggestion({
+                                        id: $(this).data('id'),
+                                        productName: $(this).data('product-name'),
+                                        unitPrice: $(this).data('unit-price')
+                                    });
+                                });
+
+                                $suggestionsDiv.append($item);
+                            });
+
+                            $suggestionsDiv.show();
+                        } else {
+                            $suggestionsDiv.append(`<div style="padding: 5px;">No product found</div>`);
+                            $suggestionsDiv.show();
+                        }
+                    },
+                    error: function () {
+                        console.error('Error fetching product suggestions.');
+                        $('#product-suggestions').hide();
+                    }
+                });
+            }, 300);
+
+            $('#ProductName').on('input', function () {
+                const name = $(this).val();
+                $('#ProductId').val('0');
+                fetchProductSuggestions(name);
+            });
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#ProductName, #product-suggestions').length) {
+                    $('#product-suggestions').hide();
+                }
+            });
+
+            // Remove row on button click
+            $(document).on('click', '.remove-row', function () {
+                $(this).closest('tr').remove();
+                calculateTotals(); // recalculate after removal
+            });
+
+            // Recalculate total on quantity or discount change
+            $(document).on('input', '.quantity, #ManualDiscount, .discount-input', function () {
+                calculateTotals();
+            });
+        });
+    </script>
+
+
+
+
+} 
