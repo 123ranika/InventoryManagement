@@ -31,7 +31,7 @@
                         @item.CategoryName
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.CategoryID" class="btn btn-sm btn-warning me-2">Edit</a>
+                        <a href="@Url.Action("EditCategory", "Category", new { id = @item.CategoryID })" class="btn btn-xs btn-warning me-1">Edit</a>
                         <a href="@Url.Action("DeleteCategory", "Category", new { id = @item.CategoryID })" asp-action="Delete" asp-route-id="@item.CategoryID" class="btn btn-sm btn-danger">Delete</a>
                     </td>
 

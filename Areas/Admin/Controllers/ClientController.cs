@@ -40,6 +40,34 @@ namespace InventoryManagement.Areas.Admin.Controllers
 
             return RedirectToAction("AddClient");
         }
+        [Route("EditClient")]
+        public IActionResult EditClient(Guid id)
+        {
+            var data = _context.Clients.Find(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            return View(data);
+        }
+
+        [HttpPost("EditClient")]
+        public IActionResult EditClient(Clients client)
+        {
+            var existingClient = _context.Clients.FirstOrDefault(x => x.ClientID == client.ClientID);
+            if (existingClient != null)
+            {
+                existingClient.ClientName = client.ClientName;
+                existingClient.Phone = client.Phone;
+                existingClient.Email = client.Email;
+                existingClient.Address = client.Address;
+
+                _context.Update(existingClient);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("ClientList");
+        }
 
 
         [Route("ClientList")]

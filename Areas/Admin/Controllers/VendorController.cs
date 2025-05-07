@@ -2,6 +2,7 @@
 using InventoryManagement.DataModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryManagement.Areas.Admin.Controllers
 {
@@ -41,6 +42,36 @@ namespace InventoryManagement.Areas.Admin.Controllers
              return RedirectToAction("VendorCreate");
         }
 
+        [Route("VendorEdit")]
+        public IActionResult VendorEdit(Guid id)
+        {
+            var data = _context.Vendors.Find(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+
+            return View(data);
+        }
+        [HttpPost("VendorEdit")]
+
+        public IActionResult VendorEdit(Vendors vendor)
+        {
+            var datacheck = _context.Vendors.FirstOrDefault(x => x.VendorID == vendor.VendorID);
+
+            if (datacheck != null)
+            {
+                datacheck.VendorName = vendor.VendorName;
+                datacheck.Phone = vendor.Phone;
+                datacheck.Email = vendor.Email;
+                datacheck.Address = vendor.Address;
+
+                _context.Update(datacheck);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("VendorList");
+        }
 
         [Route("VendorList")]
         public IActionResult VendorList()
@@ -62,45 +93,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
 
             return RedirectToAction("VendorList");
         }
-        [Route("VendorEdit")]
-        public IActionResult VendorEdit(Guid id)
-        {
-
-            var vendor = _context.Vendors.Where(x => x.VendorID == id).FirstOrDefault();
-
-            if (vendor == null)
-            {
-                return RedirectToAction("VendorList");
-            }
-            return View(vendor);
-        }
-        [HttpPost("VendorUpdateSubmit")]
-        public IActionResult VendorUpdateSubmit(Vendors datamodel)
-        {
-            try
-            {
-                var vendor = _context.Vendors.Where(x => x.VendorID == datamodel.VendorID).FirstOrDefault();
-
-                if (vendor == null)
-                {
-                    return RedirectToAction("VendorList");
-                }
-                vendor.VendorName = datamodel.VendorName;
-
-
-                _context.Update(vendor);
-                _context.SaveChanges();
-
-                return RedirectToAction("VendorList");
-
-            }
-            catch
-            {
-                return RedirectToAction("VendorList");
-            }
-
        
-        }
 
     }
 }

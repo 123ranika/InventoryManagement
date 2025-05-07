@@ -1,25 +1,25 @@
-﻿@model InventoryManagement.DataModel.Vendors
+﻿@model InventoryManagement.DataModel.Clients
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Edit Vendor";
+    ViewData["Title"] = "Edit Client";
 }
 
 <div class="card card-primary mt-4">
     <div class="card-header" style="background-color:#717171">
-        <h3 class="card-title text-white">Edit Vendor</h3>
+        <h3 class="card-title text-white">Edit Client</h3>
     </div>
 
-    <form asp-action="VendorEdit" method="post">
+    <form asp-action="EditClient" method="post">
         <div class="card-body">
 
-            <!-- Hidden ID -->
-            <input type="hidden" name="VendorID" value="@Model.VendorID" />
+            <!-- Hidden Client ID -->
+            <input type="hidden" value="@Model.ClientID" name="ClientID" />
 
-            <!-- Vendor Name -->
+            <!-- Client Name -->
             <div class="form-group mb-3">
-                <input name="VendorName" value="@Model.VendorName" class="form-control" placeholder="Enter vendor name" />
-                <span asp-validation-for="VendorName" class="text-danger"></span>
+                <input name="ClientName" value="@Model.ClientName" class="form-control" placeholder="Enter client name" />
+                <span asp-validation-for="ClientName" class="text-danger"></span>
             </div>
 
             <!-- Phone -->
@@ -30,20 +30,20 @@
 
             <!-- Email -->
             <div class="form-group mb-3">
-                <input name="Email" value="@Model.Email" class="form-control" placeholder="Enter email address" />
+                <input name="Email" value="@Model.Email" type="email" class="form-control" placeholder="Enter email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <!-- Address -->
             <div class="form-group mb-3">
-                <textarea name="Address" class="form-control" rows="3" placeholder="Enter address">@Model.Address</textarea>
+                <textarea name="Address" id="Address" class="form-control" rows="3" placeholder="Enter address">@Model.Address</textarea>
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
 
         </div>
 
         <div class="card-footer">
-            <button type="submit" class="btn btn-primary" style="background-color:#717171">Update Vendor</button>
+            <button type="submit" class="btn btn-primary" style="background-color:#717171">Update Client</button>
         </div>
     </form>
 </div>

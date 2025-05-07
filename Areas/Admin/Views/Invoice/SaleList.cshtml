@@ -1,4 +1,4 @@
-﻿@model IEnumerable<InventoryManagement.DataModel.Invoices>
+﻿@model IEnumerable<InventoryManagement.DataModel.InvoiceVM>
 
 @{
     ViewData["Title"] = "SaleList";
@@ -27,12 +27,7 @@
             <th>
                 Description
             </th>
-            <th>
-                Quantity
-            </th>
-            <th>
-                TotalPrice
-            </th>
+            
             <th>
                 Discount
             </th>
@@ -75,15 +70,11 @@
             <td>
                 @item.Description
             </td>
-            <td>
-                @item.Quantity
-            </td>
+            
             <td>
                 @item.Discount
             </td>
-            <td>
-                @item.TotalPrice
-            </td>
+            
             <td>
                 @item.Subtotal
             </td>
@@ -100,8 +91,8 @@
                 @item.Slip
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.InvoiceId">Edit</a>           
-                <a asp-action="Delete" asp-route-id="@item.InvoiceId">Delete</a>
+                    
+                    @* <a href="@Url.Action("DeleteInvoice", "Invoice", new { id = @item.InvoiceID })" asp-action="Delete" asp-route-id="@item.InvoiceID" class="btn btn-xs btn-danger">Delete</a> *@
             </td>
         </tr>
 }

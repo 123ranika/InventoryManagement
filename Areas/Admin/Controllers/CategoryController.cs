@@ -45,6 +45,36 @@ namespace InventoryManagement.Areas.Admin.Controllers
 
             return RedirectToAction("AddCategory");
         }
+
+        // GET: Edit Category
+        [Route("EditCategory")]
+        public IActionResult EditCategory(Guid id)
+        {
+            var data = _context.Categorys.Find(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+
+            return View(data);
+        }
+
+        // POST: Edit Category
+        [HttpPost("EditCategory")]
+        public IActionResult EditCategory(Categorys category)
+        {
+            var datacheck = _context.Categorys.FirstOrDefault(x => x.CategoryID == category.CategoryID);
+
+            if (datacheck != null)
+            {
+                datacheck.CategoryName = category.CategoryName;
+                _context.Update(datacheck);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("CategoryList");
+        }
+
         [Route("CategoryList")]
         public IActionResult CategoryList()
         {

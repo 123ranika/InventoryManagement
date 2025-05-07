@@ -52,7 +52,7 @@
                         @item.Description
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-xs btn-warning me-1">Edit</a>
+                        <a href="@Url.Action("ProductEdit", "Product", new { id = @item.ProductID })" class="btn btn-xs btn-warning me-1">Edit</a>
                         <a href="@Url.Action("DeleteProduct", "Product", new { id = @item.ProductID })" asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-xs btn-danger">Delete</a>
                     </td>
                 </tr>

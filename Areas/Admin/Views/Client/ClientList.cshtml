@@ -46,7 +46,7 @@
                         @item.Address
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.ClientID" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="@Url.Action("EditClient", "Client", new { id = @item.ClientID })" class="btn btn-xs btn-warning me-1">Edit</a>
                         <a href="@Url.Action("DeleteClient", "Client", new { id = @item.ClientID })" asp-action="Delete" asp-route-id="@item.ClientID" class="btn btn-sm btn-danger">Delete</a>
                     </td>
                 </tr>

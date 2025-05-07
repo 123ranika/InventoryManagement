@@ -105,24 +105,24 @@ function updateOrderSummary() {
     // Calculate subtotal
     const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
 
-   
     // Get manual discount
     const manualDiscount = parseFloat(document.getElementById('ManualDiscount').value) || 0;
 
     // Calculate grand total
-    const grandTotal = subtotal  - manualDiscount;
+    const grandTotal = subtotal - manualDiscount;
 
-    // Get Due amount entered by user
-    const Due = parseFloat(document.getElementById('Due').value) || 0;
+    // Get amount paid
+    const payAmount = parseFloat(document.getElementById('Pay').value) || 0;
+    console.log(payAmount);
 
-    // Calculate Paid amount (it's what's left after subtracting the due amount)
-    const Paid = Math.max(0, grandTotal - Due);
+    // Calculate due amount
+    const dueAmount = grandTotal - payAmount;
 
     // Update display fields
-    document.getElementById('subtotal').value = subtotal.toFixed(2);
 
+    document.getElementById('subtotal').value = subtotal.toFixed(2);
     document.getElementById('grandTotal').value = Math.max(0, grandTotal).toFixed(2);
-    document.getElementById('Paid').value = Math.max(0, Paid).toFixed(2);
+    document.getElementById('Due').value = Math.max(0, dueAmount).toFixed(2);
 }
 
 
@@ -191,17 +191,15 @@ $(document).ready(function () {
             InvoiceID: $('#Invoice_ID').val(),
             Total_Discount: $('#totalDiscount').val(),
             Due: $('#Due').val(),
-            Paid: $('#Paid').val(),
+            Pay: $('#Paid').val(),
             Date: $('#Date').val(),
-            ManualDiscount: $('#ManualDiscount').val(),
+            Discount: $('#ManualDiscount').val(),
             PaymentMethod: selectedPaymentMethod,
             IsPrint: isPrint,
             InvoiceItems: items.map(item => ({
                 TotalPrice: item.totalPrice,
                 Description: item.description,
-                Quantity: item.quantity,
-                ItemDiscount: item.discountValue,
-                discountType: item.discountType,
+                Quantity: item.quantity,       
                 Price: item.unitPrice
             }))
         };
@@ -263,80 +261,6 @@ $(document).ready(function () {
         return true;
     }
 
-
-
-    // Handle Save Button Click
-    $("#SaveButton").click(function (event) {
-        event.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        //Disable button
-        $('#SaveButton').prop('disabled', true);
-
-        var invoiceData = getInvoiceData(false);
-   
-        $.ajax({
-            url: '@Url.Action("Index", "Invoice")',
-            type: 'POST',
-            data: invoiceData,
-            success: function () {
-                //Enable button
-                $('#SaveButton').prop('disabled', false);
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Invoice has been saved!",
-                    timer: 1500,
-                    showConfirmButton: false,
-                    customClass: {
-                        popup: 'small-alert'
-                    }
-                });
-
-                clearForm();
-
-            },
-            error: function () {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "Something went wrong",
-                    timer: 1500,
-                    showConfirmButton: false,
-                    customClass: {
-                        popup: 'small-alert'
-                    }
-                });
-            }
-        });
-    });
-
-    // Handle Print Button Click
-    $("#PrintButton").click(function (event) {
-        event.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        var invoiceData = getInvoiceData(true);
-        $.ajax({
-            url: '@Url.Action("Index", "Invoice")',
-            type: 'POST',
-            data: invoiceData,
-            success: function () {
-                window.open('@Url.Action("InvoicePrint", "Invoice")', '_blank');
-
-                clearForm();
-            },
-            error: function () {
-                alert("Failed to print invoice.");
-            }
-        });
-    });
 });
 
 
@@ -523,6 +447,55 @@ $(document).ready(function () {
         if (!$(e.target).closest('#Description, #productsuggestions').length) {
             $('#productsuggestions').hide();
         }
+    });
+
+    //save data
+    $('#SaveButton').click(function (e) {
+        alert("gdkjkdvldl");
+        e.preventDefault();
+
+        const productList = [];
+        $('#items-container tr').each(function () {
+            const row = $(this);
+            productList.push({
+                productName: row.find('.product-name').text(),
+                quantity: parseInt(row.find('.product-qty').text()),
+                price: parseFloat(row.find('.product-price').text()),
+                total: parseFloat(row.find('.product-total').text())
+            });
+        });
+
+        const invoice = {
+            customerName: $('#Name').val(),
+            date: $('#Date').val(),
+            address: $('#Address').val(),
+            phone: $('#Phone').val(),
+            description: $('#Description').val(),
+            unitPrice: parseFloat($('#UnitPrice').val()) || 0,
+            discount: parseFloat($('#ManualDiscount').val()) || 0,
+           
+            products: productList,
+            subtotal: parseFloat($('#subtotal').val()) || 0,
+            grandTotal: parseFloat($('#grandTotal').val()) || 0,
+            pay: parseFloat($('#Pay').val()) || 0,
+            due: parseFloat($('#Due').val()) || 0,
+            paymentType: $('input[name="paymentMethod"]:checked').val(),
+            slip: parseInt($('#Invoice_ID').val()) || 0
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Invoice/OrderSummarySubmit",
+            contentType: "application/json",
+            data: JSON.stringify(invoice),
+            success: function (response) {
+                alert("Invoice submitted successfully!");
+                // Optionally redirect or clear form here
+            },
+            error: function (xhr) {
+                alert("Submission failed: " + xhr.responseText);
+            }
+        });
     });
 });
 

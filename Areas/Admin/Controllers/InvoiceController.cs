@@ -79,7 +79,29 @@ namespace InventoryManagement.Areas.Admin.Controllers
             }
         }
 
-       
+
+        [HttpPost("OrderSummarySubmit")]
+        public IActionResult OrderSummarySubmit([FromBody] InvoiceVM model)
+        {
+            if (model == null)
+            {
+                return Json(new { success = false, message = "Invalid invoice data." });
+            }
+
+            // You can log or store the model here
+
+            return Json(new { success = true, message = "Invoice received successfully." });
+        }
+
+
+        [Route("SaleList")]
+        public IActionResult SaleList()
+        {
+            var datalist = _context.Invoices.ToList();
+
+            return View(datalist);
+        }
+        
     }
 }
 
