@@ -125,7 +125,6 @@ function updateOrderSummary() {
     document.getElementById('Due').value = Math.max(0, dueAmount).toFixed(2);
 }
 
-
 // Add event listeners for real-time total calculation
 document.querySelector('input[name="Quantity"]').addEventListener('input', calculateLineTotal);
 document.querySelector('input[name="UnitPrice"]').addEventListener('input', calculateLineTotal);
@@ -163,6 +162,10 @@ document.getElementById('Due').addEventListener('input', function (e) {
     updateOrderSummary();
 });
 
+document.getElementById('Pay').addEventListener('input', function (e) {
+    updateOrderSummary();
+});
+
 function calculateLineTotal() {
     const quantity = parseFloat(document.querySelector('input[name="Quantity"]').value) || 0;
     const unitPrice = parseFloat(document.querySelector('input[name="UnitPrice"]').value) || 0;
@@ -191,7 +194,7 @@ $(document).ready(function () {
             InvoiceID: $('#Invoice_ID').val(),
             Total_Discount: $('#totalDiscount').val(),
             Due: $('#Due').val(),
-            Pay: $('#Paid').val(),
+            Pay: $('#Pay').val(),
             Date: $('#Date').val(),
             Discount: $('#ManualDiscount').val(),
             PaymentMethod: selectedPaymentMethod,
@@ -287,7 +290,7 @@ var clearForm = function () {
     document.getElementById('ManualDiscount').value = "";
     document.getElementById('grandTotal').value = "0.00";
     document.getElementById('Due').value = "";
-    document.getElementById('Paid').value = "0.00";
+    document.getElementById('Pay').value = "0.00";
     updateOrderSummary();
 }
 
@@ -451,7 +454,7 @@ $(document).ready(function () {
 
     //save data
     $('#SaveButton').click(function (e) {
-        alert("gdkjkdvldl");
+        
         e.preventDefault();
 
         const productList = [];
@@ -472,7 +475,7 @@ $(document).ready(function () {
             phone: $('#Phone').val(),
             description: $('#Description').val(),
             unitPrice: parseFloat($('#UnitPrice').val()) || 0,
-            discount: parseFloat($('#ManualDiscount').val()) || 0,
+            discount: parseFloat($('#ManualDiscount').val()) || 0,         
            
             products: productList,
             subtotal: parseFloat($('#subtotal').val()) || 0,
@@ -482,6 +485,8 @@ $(document).ready(function () {
             paymentType: $('input[name="paymentMethod"]:checked').val(),
             slip: parseInt($('#Invoice_ID').val()) || 0
         };
+        console.log(invoice);
+
 
         $.ajax({
             type: "POST",
