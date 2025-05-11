@@ -1,4 +1,5 @@
-﻿using InventoryManagement.Data;
+﻿using InventoryManagement.Areas.Admin.Data;
+using InventoryManagement.Data;
 using InventoryManagement.DataModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -97,7 +98,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
         [Route("SaleList")]
         public IActionResult SaleList()
         {
-            var datalist = _context.Invoices.ToList();
+            var datalist = _context.Invoice.ToList();
 
             return View(datalist);
         }

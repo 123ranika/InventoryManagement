@@ -68,11 +68,10 @@ function updateTable() {
     items.forEach((item, index) => {
         const row = `
                     <tr>
-                        <td>${item.description}</td>
-                        <td>${item.quantity}</td>
-                        <td>${item.unitPrice}</td>
-                       
-                        <td>${item.totalPrice.toFixed(2)}</td>
+                        <td class="product-name">${item.description}</td>
+                        <td class="product-qty">${item.quantity}</td>
+                        <td class="product-price">${item.unitPrice}</td>                      
+                        <td class="product-total">${item.totalPrice.toFixed(2)}</td>
                         <td>
                             <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(${index})">
                                 <i class="bi bi-trash"></i> Remove
@@ -468,39 +467,47 @@ $(document).ready(function () {
             });
         });
 
-        const invoice = {
-            customerName: $('#Name').val(),
-            date: $('#Date').val(),
+        const clients = {
+            customerName: $('#Name').val(),           
             address: $('#Address').val(),
             phone: $('#Phone').val(),
-            description: $('#Description').val(),
-            unitPrice: parseFloat($('#UnitPrice').val()) || 0,
-            discount: parseFloat($('#ManualDiscount').val()) || 0,         
-           
+        }
+        console.log(clients);
+
+
+        const invoice = {    
+            date: $('#Date').val(),
             products: productList,
             subtotal: parseFloat($('#subtotal').val()) || 0,
+            discount: parseFloat($('#ManualDiscount').val()) || 0,
             grandTotal: parseFloat($('#grandTotal').val()) || 0,
             pay: parseFloat($('#Pay').val()) || 0,
             due: parseFloat($('#Due').val()) || 0,
             paymentType: $('input[name="paymentMethod"]:checked').val(),
-            slip: parseInt($('#Invoice_ID').val()) || 0
+            slip: parseInt($('#Invoice_ID').val()) || 0,
+            client: clients
+
         };
+
         console.log(invoice);
+        
+        console.log(productList);
 
+        debugger;
 
-        $.ajax({
-            type: "POST",
-            url: "/Invoice/OrderSummarySubmit",
-            contentType: "application/json",
-            data: JSON.stringify(invoice),
-            success: function (response) {
-                alert("Invoice submitted successfully!");
-                // Optionally redirect or clear form here
-            },
-            error: function (xhr) {
-                alert("Submission failed: " + xhr.responseText);
-            }
-        });
+        //$.ajax({
+        //    type: "POST",
+        //    url: "/Invoice/OrderSummarySubmit",
+        //    contentType: "application/json",
+        //    data: JSON.stringify(invoice),
+        //    success: function (response) {
+        //        alert("Invoice submitted successfully!");
+        //        // Optionally redirect or clear form here
+        //    },
+        //    error: function (xhr) {
+        //        alert("Submission failed: " + xhr.responseText);
+        //    }
+        //});
     });
 });
 

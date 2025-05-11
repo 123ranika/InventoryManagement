@@ -1,4 +1,5 @@
-﻿@model IEnumerable<InventoryManagement.DataModel.InvoiceVM>
+﻿@using InventoryManagement.Areas.Admin.Data
+@model IEnumerable<InvoiceVM>
 
 @{
     ViewData["Title"] = "SaleList";
@@ -55,7 +56,7 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+@*             <td>
                 @item.CustomerName
             </td>
             <td>
@@ -71,7 +72,7 @@
                 @item.Description
             </td>
             
-            <td>
+ *@            <td>
                 @item.Discount
             </td>
             
