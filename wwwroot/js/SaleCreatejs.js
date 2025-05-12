@@ -451,9 +451,55 @@ $(document).ready(function () {
         }
     });
 
+
+    $("#SaveButton").click(function (event) {
+        event.preventDefault();
+
+        var invoiceData = getInvoiceData(false);
+        console.log("Invoice Data:", invoiceData);
+        $.ajax({
+            url: "/Invoice/OrderSummarySubmit", 
+            type: 'POST',
+            data: invoiceData,
+            success: function () {
+                //Enable button
+                $('#SaveButton').prop('disabled', false);
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Invoice has been saved!",
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'small-alert'
+                    }
+                });
+
+                clearForm();
+
+            },
+            error: function () {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Something went wrong",
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'small-alert'
+                    }
+                });
+            }
+        });
+    });
+
+
+
+
+
     //save data
-    $('#SaveButton').click(function (e) {
-        
+    $('#').click(function (e) {
+      
         e.preventDefault();
 
         const productList = [];
@@ -472,12 +518,10 @@ $(document).ready(function () {
             address: $('#Address').val(),
             phone: $('#Phone').val(),
         }
-        console.log(clients);
 
 
         const invoice = {    
             date: $('#Date').val(),
-            products: productList,
             subtotal: parseFloat($('#subtotal').val()) || 0,
             discount: parseFloat($('#ManualDiscount').val()) || 0,
             grandTotal: parseFloat($('#grandTotal').val()) || 0,
@@ -485,29 +529,69 @@ $(document).ready(function () {
             due: parseFloat($('#Due').val()) || 0,
             paymentType: $('input[name="paymentMethod"]:checked').val(),
             slip: parseInt($('#Invoice_ID').val()) || 0,
-            client: clients
-
+            client: clients,
+            products: productList,
         };
 
-        console.log(invoice);
-        
-        console.log(productList);
+      
 
-        debugger;
-
-        //$.ajax({
-        //    type: "POST",
-        //    url: "/Invoice/OrderSummarySubmit",
-        //    contentType: "application/json",
-        //    data: JSON.stringify(invoice),
-        //    success: function (response) {
-        //        alert("Invoice submitted successfully!");
-        //        // Optionally redirect or clear form here
-        //    },
-        //    error: function (xhr) {
-        //        alert("Submission failed: " + xhr.responseText);
-        //    }
-        //});
+        $.ajax({
+            type: "POST",
+            url: "/Invoice/OrderSummarySubmit",
+            contentType: "application/json",
+            data: invoice,
+            success: function (response) {
+                alert("Invoice submitted successfully!");
+                // Optionally redirect or clear form here
+            },
+            error: function (xhr) {
+                alert("Submission failed: " + xhr.responseText);
+            }
+        });
     });
 });
+
+function getInvoiceData(isPrint = false) {
+    
+    const items = [];
+    $('#items-container tr').each(function () {
+        const row = $(this);
+        items.push({
+            productName: row.find('.product-name').text(),
+            quantity: parseInt(row.find('.product-qty').text()),
+            price: parseFloat(row.find('.product-price').text()),
+            total: parseFloat(row.find('.product-total').text())
+        });
+    });
+
+    return {
+
+
+        ClientID: $('#CustomerId').val(),//id
+        ClientName: $('#Name').val(),
+        Phone: $('#Phone').val(),
+        Address: $('#Address').val(),
+
+
+        GrandTotal: $('#grandTotal').val(),
+        InvoiceID: $('#Invoice_ID').val(),
+        Total_Discount: $('#totalDiscount').val(),
+        Due: $('#Due').val(),
+        Paid: $('#Paid').val(),
+        Date: $('#Date').val(),
+        ManualDiscount: $('#ManualDiscount').val(),
+
+
+        InvoiceItems: items.map(item => ({
+            Total: item.total,
+            ProductName: item.productName,
+            Quantity: item.quantity,
+            discountType: item.discountType,
+            Price: item.price
+        }))
+    };
+}
+
+
+ 
 
