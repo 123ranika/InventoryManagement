@@ -99,7 +99,6 @@ namespace InventoryManagement.Areas.Admin.Controllers
         {
             var datalist = _context.Products.ToList();
 
-
             return View(datalist);
         }
 
