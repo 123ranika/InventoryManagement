@@ -167,11 +167,26 @@ namespace InventoryManagement.Areas.Admin.Controllers
         [Route("SaleList")]
         public IActionResult SaleList()
         {
-            var datalist = _context.Invoice.ToList();
+            var datalist = (from invoice in _context.Invoice
+                            join client in _context.Clients
+                            on invoice.ClientID equals client.ClientID
+                            select new InvoiceVM
+                            {            
+                                Date = invoice.Date,
+                                Subtotal = invoice.Subtotal,
+                                Discount = invoice.Discount,
+                                GrandTotal = invoice.GrandTotal,
+                                Pay = invoice.Pay,
+                                Due = invoice.Due,
+                                PaymentType = invoice.PaymentType,
+                                Slip = invoice.Slip
+                            }).ToList();
 
             return View(datalist);
         }
-        
+
+
+
     }
 }
 
