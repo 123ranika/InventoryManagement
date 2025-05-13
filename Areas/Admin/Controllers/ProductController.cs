@@ -99,10 +99,6 @@ namespace InventoryManagement.Areas.Admin.Controllers
         {
             var datalist = _context.Products.ToList();
 
-            if (!datalist.Any())
-            {
-                return RedirectToAction("ProductList");
-            }
 
             return View(datalist);
         }

@@ -4,13 +4,13 @@
     ViewData["Title"] = "VendorList";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css" />
 <div class="card card-primary">
     <div class="card-header" style="background-color:#717171">
         <h3 class="card-title">Vendor List</h3>
     </div>
 
-<table class="table">
+    <table id="myTableVendor" class="table">
     <thead>
         <tr>
             <th>
@@ -46,11 +46,23 @@
                 @item.Address
             </td>
             <td>
-                        <a href="@Url.Action("VendorEdit", "Vendor", new { id = @item.VendorID })" class="btn btn-xs btn-warning me-1">Edit</a>                  
-                        <a href="@Url.Action("DeleteVendor", "Vendor", new { id = @item.VendorID })" asp-action="Delete" asp-route-id="@item.VendorID" class="btn btn-sm btn-danger">Delete</a>
+                        <a href="@Url.Action("VendorEdit", "Vendor", new { id = @item.VendorID })" class="btn btn-xs btn-warning me-1">Edit</a>
+                        <a href="@Url.Action("DeleteVendor", "Vendor", new { id = @item.VendorID })" asp-action="Delete" asp-route-id="@item.VendorID" class="btn btn-xs btn-danger">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
 </div>
+@section Scripts {
+    <!-- ✅ Include the required DataTables JS (with HTTPS) -->
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
+
+    <!-- ✅ Initialize DataTable -->
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = new DataTable('#myTableVendor');
+        });
+    </script>
+}

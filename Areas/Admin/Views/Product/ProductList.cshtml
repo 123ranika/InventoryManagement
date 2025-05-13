@@ -4,13 +4,13 @@
     ViewData["Title"] = "ProductList";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css" />
 <div class="card card-primary">
     <div class="card-header" style="background-color:#717171">
         <h3 class="card-title">Product List</h3>
     </div>
 
-    <table class="table">
+    <table id="myTableProduct" class="table">
         <thead>
             <tr>
                 <th>
@@ -60,3 +60,15 @@
         </tbody>
     </table>
 </div>
+@section Scripts {
+    <!-- ✅ Include the required DataTables JS (with HTTPS) -->
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
+
+    <!-- ✅ Initialize DataTable -->
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = new DataTable('#myTableProduct');
+        });
+    </script>
+}
