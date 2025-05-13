@@ -182,8 +182,7 @@ function calculateLineTotal() {
 $(document).ready(function () {
     // Function to collect the invoice data dynamically when the button is clicked
     function getInvoiceData(isPrint = false) {
-       // var selectedPaymentType = $('input[name="paymentType"]:checked').val();
-        PaymentType: $('input[name="paymentType"]:checked').val(),
+        var PaymentType = $('input[name="paymentType"]:checked').val();
 
         return {
             ClientId: $('#ClientId').val(),
@@ -197,8 +196,9 @@ $(document).ready(function () {
             Pay: $('#Pay').val(),
             Date: $('#Date').val(),
             Discount: $('#ManualDiscount').val(),
+           // PaymentType: $('#paymentType').val(),
             PaymentType: $('input[name="paymentType"]:checked').val(),
-           
+
             InvoiceItems: items.map(item => ({
                 TotalPrice: item.totalPrice,
                 Description: item.description,
@@ -311,9 +311,9 @@ $(document).ready(function () {
     // Function to handle suggestion population
     function populateSuggestion(item) {
         $('#ClientId').val(item.id || '0');
-        $('#Name').val(item.clientName || '0');
-        $('#Phone').val(item.phone || '0');
-        $('#Address').val(item.address || '0');
+        $('#Name').val(item.clientName || '');
+        $('#Phone').val(item.phone || '');
+        $('#Address').val(item.address || '');
         $('#suggestions').hide();
     }
     function populateProductSuggestion(item) {
