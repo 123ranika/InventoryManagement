@@ -8,7 +8,7 @@ function addItem() {
     const description = document.querySelector('input[name="Description"]').value;
     const quantity = parseFloat(document.querySelector('input[name="Quantity"]').value);
     const unitPrice = parseFloat(document.querySelector('input[name="UnitPrice"]').value);
-   
+
     // Validate inputs
     if (!description || !quantity || !unitPrice) {
         Swal.fire({
@@ -26,7 +26,7 @@ function addItem() {
 
     // Calculate total price for this item
     const subtotal = quantity * unitPrice;
-   
+
     const totalPrice = subtotal;
 
     // Create new item object
@@ -40,7 +40,7 @@ function addItem() {
 
     // Add to items array
     items.push(newItem);
-  
+
 
     // Update the table
     updateTable();
@@ -168,11 +168,11 @@ document.getElementById('Pay').addEventListener('input', function (e) {
 function calculateLineTotal() {
     const quantity = parseFloat(document.querySelector('input[name="Quantity"]').value) || 0;
     const unitPrice = parseFloat(document.querySelector('input[name="UnitPrice"]').value) || 0;
-  
+
 
     const total = quantity * unitPrice;
     //const discountAmount = calculateDiscount(subtotal, discountValue);
-   
+
     document.querySelector('input[name="TotalPrice"]').value = total.toFixed(2);
 }
 
@@ -182,11 +182,12 @@ function calculateLineTotal() {
 $(document).ready(function () {
     // Function to collect the invoice data dynamically when the button is clicked
     function getInvoiceData(isPrint = false) {
-        var selectedPaymentMethod = $('input[name="paymentMethod"]:checked').val();
+       // var selectedPaymentType = $('input[name="paymentType"]:checked').val();
+        PaymentType: $('input[name="paymentType"]:checked').val(),
 
         return {
-            CustomerId: $('#CustomerId').val(),
-            Name: $('#Name').val(),
+            ClientId: $('#ClientId').val(),
+            ClientName: $('#Name').val(),
             Phone: $('#Phone').val(),
             Address: $('#Address').val(),
             GrandTotal: $('#grandTotal').val(),
@@ -196,12 +197,12 @@ $(document).ready(function () {
             Pay: $('#Pay').val(),
             Date: $('#Date').val(),
             Discount: $('#ManualDiscount').val(),
-            PaymentMethod: selectedPaymentMethod,
-            IsPrint: isPrint,
+            PaymentType: $('input[name="paymentType"]:checked').val(),
+           
             InvoiceItems: items.map(item => ({
                 TotalPrice: item.totalPrice,
                 Description: item.description,
-                Quantity: item.quantity,       
+                Quantity: item.quantity,
                 Price: item.unitPrice
             }))
         };
@@ -213,7 +214,7 @@ $(document).ready(function () {
         var errorMessages = [];
 
         // Check payment method
-        if (!$('input[name="paymentMethod"]:checked').val()) {
+        if (!$('input[name="paymentType"]:checked').val()) {
             errorMessages.push("Please select a payment method");
             isValid = false;
         }
@@ -273,7 +274,7 @@ var clearForm = function () {
     // Reset form
     $('#invoiceForm')[0].reset();
     // Reset payment method radio buttons
-    $('input[name="paymentMethod"]').prop('checked', false);
+    $('input[name="paymentType"]').prop('checked', false);
 
     //refreshing invoice id
     var newInvoiceId = new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14);
@@ -309,18 +310,18 @@ $(document).ready(function () {
 
     // Function to handle suggestion population
     function populateSuggestion(item) {
-        $('#CustomerId').val(item.id || '0');
-        $('#Name').val(item.name || '');
-        $('#Phone').val(item.phone || '');
-        $('#Address').val(item.address || '');
+        $('#ClientId').val(item.id || '0');
+        $('#Name').val(item.clientName || '0');
+        $('#Phone').val(item.phone || '0');
+        $('#Address').val(item.address || '0');
         $('#suggestions').hide();
     }
-     function populateProductSuggestion(item) {
-         debugger;
-         $('#Description').val(item.productName || '');
-         $('#UnitPrice').val(item.unitPrice || '');
+    function populateProductSuggestion(item) {
+        debugger;
+        $('#Description').val(item.productName || '');
+        $('#UnitPrice').val(item.unitPrice || '');
 
-         $('#productsuggestions').hide();
+        $('#productsuggestions').hide();
     }
 
     // Fetch phone suggestions
@@ -337,7 +338,7 @@ $(document).ready(function () {
             success: function (data) {
                 const suggestionsDiv = $('#suggestions');
                 suggestionsDiv.empty().hide();
-                
+
                 if (data.success && data.references && data.references.length) {
                     data.references.forEach(function (item) {
                         const suggestionItem = $(`
@@ -394,7 +395,7 @@ $(document).ready(function () {
                 debugger;
                 if (data.success && data.references && data.references.length) {
                     data.references.forEach(function (item) {
- 
+
                         const suggestionItem = $(`
                                     <div class="suggestion-item"
                                          style="padding: 5px; cursor: pointer;"
@@ -406,7 +407,7 @@ $(document).ready(function () {
 
                         suggestionItem.on('click', function () {
                             populateProductSuggestion({
-                               
+
                                 productName: $(this).data('anikaName'),
                                 unitPrice: $(this).data('anikaPrice')
                             });
@@ -430,7 +431,7 @@ $(document).ready(function () {
     // Phone input event handler
     $('#Phone').on('input', function () {
         const phoneNumber = $(this).val();
-        $('#CustomerId').val('0'); // Reset customer ID on input
+        $('#ClientId').val('0'); // Reset customer ID on input
         fetchPhoneSuggestions(phoneNumber);
     });
     $('#Description').on('input', function () {
@@ -456,23 +457,23 @@ $(document).ready(function () {
         event.preventDefault();
 
         var invoiceData = getInvoiceData(false);
+
+        console.log(invoiceData);
+
         console.log("Invoice Data:", invoiceData);
         $.ajax({
-            url: "/Invoice/OrderSummarySubmit", 
+            url: "/Invoice/OrderSummarySubmit",
             type: 'POST',
             data: invoiceData,
             success: function () {
                 //Enable button
-                $('#SaveButton').prop('disabled', false);
+               
                 Swal.fire({
                     position: "top-end",
                     icon: "success",
-                    title: "Invoice has been saved!",
-                    timer: 1500,
+                    title: "Your work has been saved",
                     showConfirmButton: false,
-                    customClass: {
-                        popup: 'small-alert'
-                    }
+                    timer: 1500
                 });
 
                 clearForm();
@@ -493,66 +494,10 @@ $(document).ready(function () {
         });
     });
 
-
-
-
-
-    //save data
-    $('#').click(function (e) {
-      
-        e.preventDefault();
-
-        const productList = [];
-        $('#items-container tr').each(function () {
-            const row = $(this);
-            productList.push({
-                productName: row.find('.product-name').text(),
-                quantity: parseInt(row.find('.product-qty').text()),
-                price: parseFloat(row.find('.product-price').text()),
-                total: parseFloat(row.find('.product-total').text())
-            });
-        });
-
-        const clients = {
-            customerName: $('#Name').val(),           
-            address: $('#Address').val(),
-            phone: $('#Phone').val(),
-        }
-
-
-        const invoice = {    
-            date: $('#Date').val(),
-            subtotal: parseFloat($('#subtotal').val()) || 0,
-            discount: parseFloat($('#ManualDiscount').val()) || 0,
-            grandTotal: parseFloat($('#grandTotal').val()) || 0,
-            pay: parseFloat($('#Pay').val()) || 0,
-            due: parseFloat($('#Due').val()) || 0,
-            paymentType: $('input[name="paymentMethod"]:checked').val(),
-            slip: parseInt($('#Invoice_ID').val()) || 0,
-            client: clients,
-            products: productList,
-        };
-
-      
-
-        $.ajax({
-            type: "POST",
-            url: "/Invoice/OrderSummarySubmit",
-            contentType: "application/json",
-            data: invoice,
-            success: function (response) {
-                alert("Invoice submitted successfully!");
-                // Optionally redirect or clear form here
-            },
-            error: function (xhr) {
-                alert("Submission failed: " + xhr.responseText);
-            }
-        });
-    });
 });
 
 function getInvoiceData(isPrint = false) {
-    
+
     const items = [];
     $('#items-container tr').each(function () {
         const row = $(this);
@@ -566,20 +511,20 @@ function getInvoiceData(isPrint = false) {
 
     return {
 
-
-        ClientID: $('#CustomerId').val(),//id
-        ClientName: $('#Name').val(),
-        Phone: $('#Phone').val(),
-        Address: $('#Address').val(),
+        client: {
+            clientName: $('#Name').val(),
+            phone: $('#Phone').val(),
+            address: $('#Address').val(),
+        },
 
 
         GrandTotal: $('#grandTotal').val(),
+        Subtotal: $('#subtotal').val(),
         InvoiceID: $('#Invoice_ID').val(),
-        Total_Discount: $('#totalDiscount').val(),
         Due: $('#Due').val(),
-        Paid: $('#Paid').val(),
+        Pay: $('#Pay').val(),
         Date: $('#Date').val(),
-        ManualDiscount: $('#ManualDiscount').val(),
+        Discount: $('#ManualDiscount').val(),
 
 
         InvoiceItems: items.map(item => ({
@@ -593,5 +538,5 @@ function getInvoiceData(isPrint = false) {
 }
 
 
- 
+
 

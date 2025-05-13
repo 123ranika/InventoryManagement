@@ -93,32 +93,20 @@ namespace InventoryManagement.Areas.Admin.Controllers
      
             try
             {
-
+                //Guid ClientID;
                 if (model.Client != null && model.Client.Phone != null)
                 {
-                    // Check if a client with the same phone number already exists
-                    var existingClient = _context.Clients.FirstOrDefault(c => c.Phone == model.Client.Phone);
-                    //check Client.Phone 
-                    //instert new Client
-                    if (existingClient == null)
-                    {
-                        // Insert new client
-                        var newClient = new Clients
-                        {
-                            ClientID = model.ClientID, // Or Guid.NewGuid()
-                            ClientName = model.Client.ClientName,
-                            Phone = model.Client.Phone,
-                            Address = model.Client.Address
-                        };
-
-                        _context.Clients.Add(newClient);
-                        _context.SaveChanges();
-
-                        model.ClientID = newClient.ClientID;
+                    var anika = _context.Clients.Where(x => x.Phone == model.Client.Phone).FirstOrDefault();
+                    if (anika != null) {
+                        model.Client.ClientID=anika.ClientID;
                     }
                     else
                     {
-                        model.ClientID = existingClient.ClientID;
+
+                       _context.Clients.Add(model.Client);
+
+                        _context.SaveChanges();
+                        model.Client.ClientID = anika.ClientID;
                     }
                 }
 
@@ -129,9 +117,8 @@ namespace InventoryManagement.Areas.Admin.Controllers
 
                 //mapping for  InvoiceVM to Invoice datamodel 
 
-                invoiceData.InvoiceId = model.InvoiceId;
                 invoiceData.Date = model.Date;
-                invoiceData.ClientID = model.ClientID;
+                invoiceData.ClientID = model.Client.ClientID;
                 invoiceData.UnitPrice = model.UnitPrice;
                 invoiceData.Discount = model.Discount;
                 invoiceData.Subtotal = model.Subtotal;
@@ -143,11 +130,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
 
                 if (invoiceData != null)
                 {
-                    bool isMatch = _context.InvoiceItems.Where(x => x.InvoiceId == invoiceData.InvoiceId).Any();
-                    if (isMatch)
-                    {
-                        return Json(new { success = false, message = "PopupMessage.error" });
-                    }
+                    
                     _context.Invoice.Add(invoiceData);
                     _context.SaveChanges();
                 }
@@ -157,14 +140,14 @@ namespace InventoryManagement.Areas.Admin.Controllers
                 {
                     var invoiceItem = new InvoiceItems
                     {
-                        InvoiceItemsId = item.InvoiceItemsId,
-                        InvoiceId = model.InvoiceId,
+                        InvoiceId = invoiceData.InvoiceId,
                         ProductName = item.ProductName,
                         Quantity = item.Quantity,
                         Price = item.Price,
                         Total = item.Total
                     };
                     _context.InvoiceItems.Add(invoiceItem);
+                    _context.SaveChanges();
                 }
 
                 return Json(new { success = true, message = "Invoice received successfully." });

@@ -20,6 +20,7 @@ namespace InventoryManagement.Areas.Admin.Data
         public int Slip { get; set; }
         public List<InvoiceItemsVM> InvoiceItems { get; set; }
         public Clients Client { get; set; }
+
     }
 
     public class InvoiceItemsVM

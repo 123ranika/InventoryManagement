@@ -146,10 +146,13 @@ namespace InventoryManagement.Migrations
                     b.ToTable("Invoice");
                 });
 
-            modelBuilder.Entity("InventoryManagement.DataModel.Productdetails", b =>
+            modelBuilder.Entity("InventoryManagement.DataModel.InvoiceItems", b =>
                 {
-                    b.Property<Guid>("ProductId")
+                    b.Property<Guid>("InvoiceItemsId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("InvoiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<float>("Price")
@@ -164,9 +167,9 @@ namespace InventoryManagement.Migrations
                     b.Property<float>("Total")
                         .HasColumnType("real");
 
-                    b.HasKey("ProductId");
+                    b.HasKey("InvoiceItemsId");
 
-                    b.ToTable("Productdetails");
+                    b.ToTable("InvoiceItems");
                 });
 
             modelBuilder.Entity("InventoryManagement.DataModel.Products", b =>
