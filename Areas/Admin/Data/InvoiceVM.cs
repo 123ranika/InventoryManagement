@@ -26,6 +26,7 @@ namespace InventoryManagement.Areas.Admin.Data
     public class InvoiceItemsVM
     {
      
+        public Guid ProductId { get; set; }
         public Guid InvoiceItemsId { get; set; }
         public Guid InvoiceId { get; set; }
         public string? ProductName { get; set; }

@@ -8,13 +8,14 @@ function addItem() {
     const description = document.querySelector('input[name="Description"]').value;
     const quantity = parseFloat(document.querySelector('input[name="Quantity"]').value);
     const unitPrice = parseFloat(document.querySelector('input[name="UnitPrice"]').value);
+    const productId = document.querySelector('input[name="ProductGuid"]').value;
 
     // Validate inputs
     if (!description || !quantity || !unitPrice) {
         Swal.fire({
             position: "top-end",
             icon: "warning",
-            title: "Please Fill Description, price and quantity",
+            title: "Please Fill Description, price quantity and Pay Amount",
             timer: 1500,
             showConfirmButton: false,
             customClass: {
@@ -31,11 +32,13 @@ function addItem() {
 
     // Create new item object
     const newItem = {
+        productId,
         description,
         quantity,
         unitPrice,
         subtotal,
         totalPrice
+        
     };
 
     // Add to items array
@@ -64,10 +67,11 @@ function calculateDiscount(subtotal, discountValue) {
 function updateTable() {
     const tableBody = document.getElementById('items-container');
     tableBody.innerHTML = ''; // Clear existing rows
-
+    console.log(items)
     items.forEach((item, index) => {
         const row = `
                     <tr>
+                        <td class="product-productId" hidden>${item.productId}</td>
                         <td class="product-name">${item.description}</td>
                         <td class="product-qty">${item.quantity}</td>
                         <td class="product-price">${item.unitPrice}</td>                      
@@ -95,9 +99,10 @@ function removeItem(index) {
 
 function clearInputFields() {
     document.querySelector('input[name="Description"]').value = '';
-    document.querySelector('input[name="Quantity"]').value = '1';
+    document.querySelector('input[name="Quantity"]').value = '';
     document.querySelector('input[name="UnitPrice"]').value = '';
     document.querySelector('input[name="TotalPrice"]').value = '';
+    document.querySelector('input[name="ProductGuid"]').value = '';
 }
 
 function updateOrderSummary() {
@@ -320,7 +325,8 @@ $(document).ready(function () {
         debugger;
         $('#Description').val(item.productName || '');
         $('#UnitPrice').val(item.unitPrice || '');
-
+        $('#ProductGuid').val(item.productId||'');
+        //alisha
         $('#productsuggestions').hide();
     }
 
@@ -378,8 +384,10 @@ $(document).ready(function () {
 
     // Fetch Product suggestions
     const fetchProductSuggestions = debounce(function (description) {
+        const suggestionsDiv = $('#productsuggestions');
+
         if (description.length < 3) {
-            $('#productsuggestions').hide();
+            suggestionsDiv.empty().hide();
             return;
         }
 
@@ -388,29 +396,27 @@ $(document).ready(function () {
             type: 'GET',
             data: { description: description },
             success: function (data) {
-                const suggestionsDiv = $('#productsuggestions');
                 suggestionsDiv.empty().hide();
 
-
-                debugger;
                 if (data.success && data.references && data.references.length) {
                     data.references.forEach(function (item) {
-
                         const suggestionItem = $(`
-                                    <div class="suggestion-item"
-                                         style="padding: 5px; cursor: pointer;"
-                                         data-anikaName="${item.productName}"
-                                         data-anikaPrice="${item.price}">
-                                         ${item.productName}
-                                    </div>
-                                `);
+                        <div class="suggestion-item"
+                             style="padding: 5px; cursor: pointer;"
+                             data-productname="${item.productName}"
+                             data-productprice="${item.price}"
+                             data-productid="${item.productID}">
+                             ${item.productName} - ${item.price}
+                        </div>
+                    `);
 
                         suggestionItem.on('click', function () {
                             populateProductSuggestion({
-
-                                productName: $(this).data('anikaName'),
-                                unitPrice: $(this).data('anikaPrice')
+                                productName: $(this).data('productname'),
+                                unitPrice: $(this).data('productprice'),
+                                productId: $(this).data('productid')
                             });
+                            suggestionsDiv.hide();
                         });
 
                         suggestionsDiv.append(suggestionItem);
@@ -422,11 +428,12 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                console.error('Error fetching phone suggestions.');
-                $('#suggestions').hide();
+                console.error('Error fetching product suggestions.');
+                suggestionsDiv.empty().hide();
             }
         });
-    }, 300); // 300ms delay to reduce unnecessary API calls
+    }, 300);
+ 
 
     // Phone input event handler
     $('#Phone').on('input', function () {
@@ -465,18 +472,31 @@ $(document).ready(function () {
             url: "/Invoice/OrderSummarySubmit",
             type: 'POST',
             data: invoiceData,
-            success: function () {
+            success: function (res) {
                 //Enable button
-               
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Your work has been saved",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                if (res.success) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Your work has been saved",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                clearForm();
+                    clearForm();
+                }
+                else {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "warning",
+                        title: res.message,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'small-alert'
+                        }
+                    });
+                }
 
             },
             error: function () {
@@ -502,6 +522,7 @@ function getInvoiceData(isPrint = false) {
     $('#items-container tr').each(function () {
         const row = $(this);
         items.push({
+            productId: row.find('.product-productId').text(),
             productName: row.find('.product-name').text(),
             quantity: parseInt(row.find('.product-qty').text()),
             price: parseFloat(row.find('.product-price').text()),
@@ -528,6 +549,7 @@ function getInvoiceData(isPrint = false) {
 
 
         InvoiceItems: items.map(item => ({
+            ProductId: item.productId,
             Total: item.total,
             ProductName: item.productName,
             Quantity: item.quantity,

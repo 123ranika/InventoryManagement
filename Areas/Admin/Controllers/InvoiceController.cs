@@ -11,6 +11,7 @@ using System.Security.Claims;
 namespace InventoryManagement.Areas.Admin.Controllers
 {
     [Area("Admin"), Route("Invoice")]
+    [Authorize]
     public class InvoiceController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -57,10 +58,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
         [HttpGet("SearchProductByName")]
         public IActionResult SearchProductByName(string description)
         {
-            if (string.IsNullOrEmpty(description) || description.Length < 4)
-            {
-                return Json(null);
-            }
+             
             try
             {
                 var references = _context.Products
@@ -86,58 +84,74 @@ namespace InventoryManagement.Areas.Admin.Controllers
         [HttpPost("OrderSummarySubmit")]
         public IActionResult OrderSummarySubmit(InvoiceVM model)
         {
-            if (model == null)
+            if (model == null || model.InvoiceItems == null || model.Pay < 0)
             {
                 return Json(new { success = false, message = "Invalid invoice data." });
             }
-     
+
             try
             {
-                //Guid ClientID;
-                if (model.Client != null && model.Client.Phone != null)
+                // Step 1: Handle Client
+                Clients client = null;
+                if (model.Client != null && !string.IsNullOrWhiteSpace(model.Client.Phone))
                 {
-                    var anika = _context.Clients.Where(x => x.Phone == model.Client.Phone).FirstOrDefault();
-                    if (anika != null) {
-                        model.Client.ClientID=anika.ClientID;
+                    client = _context.Clients.FirstOrDefault(x => x.Phone == model.Client.Phone);
+                    if (client != null)
+                    {
+                        // Update client info
+                        client.ClientName = model.Client.ClientName;
+                        client.Address = model.Client.Address;
+                        _context.Clients.Update(client);
                     }
                     else
                     {
+                        client = model.Client;
+                        _context.Clients.Add(client);
+                    }
 
-                       _context.Clients.Add(model.Client);
+                    _context.SaveChanges(); // Save client changes
+                }
 
-                        _context.SaveChanges();
-                        model.Client.ClientID = anika.ClientID;
+                // Step 2: Check Product Quantities
+                foreach (var item in model.InvoiceItems)
+                {
+                    var product = _context.Products.FirstOrDefault(p => p.ProductID == item.ProductId);
+                    if (product == null)
+                    {
+                        return Json(new { success = false, message = $"Product not found: {item.ProductName}" });
+                    }
+
+                    if (product.Quantity < item.Quantity)
+                    {
+                        return Json(new { success = false, message = $"Not enough stock for product: {product.ProductName}" });
                     }
                 }
 
-
-
-
-                Invoice invoiceData = new Invoice();
-
-                //mapping for  InvoiceVM to Invoice datamodel 
-
-                invoiceData.Date = model.Date;
-                invoiceData.ClientID = model.Client.ClientID;
-                invoiceData.UnitPrice = model.UnitPrice;
-                invoiceData.Discount = model.Discount;
-                invoiceData.Subtotal = model.Subtotal;
-                invoiceData.GrandTotal = model.GrandTotal;
-                invoiceData.Pay = model.Pay;
-                invoiceData.Due = model.Due;
-                invoiceData.PaymentType = model.PaymentType;
-                invoiceData.Slip = model.Slip;
-
-                if (invoiceData != null)
+                // Step 3: Save Invoice
+                Invoice invoiceData = new Invoice
                 {
-                    
-                    _context.Invoice.Add(invoiceData);
-                    _context.SaveChanges();
-                }
+                    Date = model.Date,
+                    ClientID = client.ClientID,
+                    UnitPrice = model.UnitPrice,
+                    Discount = model.Discount,
+                    Subtotal = model.Subtotal,
+                    GrandTotal = model.GrandTotal,
+                    Pay = model.Pay,
+                    Due = model.Due,
+                    PaymentType = model.PaymentType,
+                    Slip = model.Slip
+                };
 
-                //use foreach loop for inster InvoiceItems
+                _context.Invoice.Add(invoiceData);
+                _context.SaveChanges();
+
+                // Step 4: Save Invoice Items & Deduct Quantity
                 foreach (var item in model.InvoiceItems)
                 {
+                    var product = _context.Products.FirstOrDefault(p => p.ProductID == item.ProductId);
+                    product.Quantity -= item.Quantity;
+                    _context.Products.Update(product);
+
                     var invoiceItem = new InvoiceItems
                     {
                         InvoiceId = invoiceData.InvoiceId,
@@ -146,22 +160,20 @@ namespace InventoryManagement.Areas.Admin.Controllers
                         Price = item.Price,
                         Total = item.Total
                     };
+
                     _context.InvoiceItems.Add(invoiceItem);
-                    _context.SaveChanges();
                 }
 
-                return Json(new { success = true, message = "Invoice received successfully." });
+                _context.SaveChanges();
 
-
+                return Json(new { success = true, message = "Invoice processed successfully." });
             }
-
-
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Invoice received Error." });
+                return Json(new { success = false, message = "An error occurred while processing the invoice." });
             }
-
         }
+
 
 
         [Route("SaleList")]
@@ -171,7 +183,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
                             join client in _context.Clients
                             on invoice.ClientID equals client.ClientID
                             select new InvoiceVM
-                            {            
+                            {
                                 Date = invoice.Date,
                                 Subtotal = invoice.Subtotal,
                                 Discount = invoice.Discount,
@@ -184,8 +196,6 @@ namespace InventoryManagement.Areas.Admin.Controllers
 
             return View(datalist);
         }
-
-
 
     }
 }
