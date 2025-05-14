@@ -315,8 +315,9 @@ $(document).ready(function () {
 
     // Function to handle suggestion population
     function populateSuggestion(item) {
+        debugger;
         $('#ClientId').val(item.id || '0');
-        $('#Name').val(item.clientName || '');
+        $('#Name').val(item.name || '');
         $('#Phone').val(item.phone || '');
         $('#Address').val(item.address || '');
         $('#suggestions').hide();

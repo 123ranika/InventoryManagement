@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace InventoryManagement.Areas.Admin.Controllers
 {
     [Area("Admin"), Route("Product")]
-    //[Authorize]
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;

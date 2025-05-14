@@ -19,6 +19,7 @@
 
             <!-- Product Name -->
             <div class="form-group mb-3">
+                <label asp-for="ProductName" class="form-label">Product Name</label>
                 <input name="ProductName" value="@Model.ProductName" class="form-control" placeholder="Enter product name" />
                 <span asp-validation-for="ProductName" class="text-danger"></span>
             </div>
@@ -26,6 +27,7 @@
             <!-- Vendor + Category Row -->
             <div class="row mb-3">
                 <div class="col-md-6">
+                    <label asp-for="Vendor" class="form-label">Select Vendor</label>
                     <select name="VendorID" class="form-select form-control">
                         <option disabled value="">-- Select Vendor --</option>
                         @foreach (var vendor in ViewBag.VendorList)
@@ -35,6 +37,7 @@
                     </select>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="Category" class="form-label">Select Category</label>
                     <select name="Category" class="form-select form-control">
                         <option disabled value="">-- Select Category --</option>
                         @foreach (var category in ViewBag.CategoryList)
@@ -48,10 +51,12 @@
             <!-- Quantity + Price Row -->
             <div class="row mb-3">
                 <div class="col-md-6">
+                    <label asp-for="Quantity" class="form-label">Quantity</label>
                     <input name="Quantity" value="@Model.Quantity" type="number" min="0" step="1" class="form-control" placeholder="Enter quantity" />
                     <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="Price" class="form-label">Price</label>
                     <input name="Price" value="@Model.Price" type="number" min="0" step="1" class="form-control" placeholder="Sell price" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
@@ -59,6 +64,7 @@
 
             <!-- Description -->
             <div class="form-group mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
                 <textarea name="Description"  id="Description" class="form-control" rows="3" placeholder="Enter description">
                     @Model.Description
                 </textarea>

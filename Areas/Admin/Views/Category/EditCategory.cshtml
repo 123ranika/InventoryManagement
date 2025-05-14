@@ -18,6 +18,7 @@
 
             <!-- Category Name -->
             <div class="form-group mb-3">
+                <label asp-for="CategoryName" class="form-label">Category Name</label>
                 <input name="CategoryName" value="@Model.CategoryName" class="form-control" placeholder="Enter category name" />
                 <span asp-validation-for="CategoryName" class="text-danger"></span>
             </div>

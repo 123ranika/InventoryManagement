@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace InventoryManagement.Areas.Admin.Controllers
 {
     [Area("Admin"), Route("Vendor")]
-    //[Authorize]
+    [Authorize]
     public class VendorController : Controller
     {
 

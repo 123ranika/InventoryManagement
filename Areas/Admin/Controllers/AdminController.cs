@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InventoryManagement.Areas.Admin.Controllers
 {
     [Area("Admin"),Route("Admin")]
-    //[Authorize]
+    [Authorize]
     public class AdminController : Controller
     {
         [Route("Index")]

@@ -1,0 +1,21 @@
+﻿@model InventoryManagement.DataModel.Invoice
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Invoice Details";
+}
+
+<div class="card">
+    <div class="card-header" style="background-color:#717171">
+        <h4 class="card-title text-white">Invoice Details</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr><th>Invoice ID</th><td>@Model.InvoiceId</td></tr>
+            <tr><th>Date</th><td>@Model.Date.ToString("yyyy-MM-dd")</td></tr>
+            <tr><th>Grand Total</th><td>@Model.GrandTotal?.ToString("0.00")</td></tr>
+            <tr><th>Payment Type</th><td>@Model.PaymentType</td></tr>
+            <tr><th>Paid</th><td>@Model.Pay.ToString("0.00")</td></tr>
+            <tr><th>Due</th><td>@Model.Due.ToString("0.00")</td></tr>
+        </table>
+    </div>
+</div>

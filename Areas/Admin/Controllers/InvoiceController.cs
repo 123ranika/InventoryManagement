@@ -107,6 +107,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
                     {
                         client = model.Client;
                         _context.Clients.Add(client);
+                        model.Client.ClientID = client.ClientID;
                     }
 
                     _context.SaveChanges(); // Save client changes
@@ -184,18 +185,33 @@ namespace InventoryManagement.Areas.Admin.Controllers
                             on invoice.ClientID equals client.ClientID
                             select new InvoiceVM
                             {
-                                Date = invoice.Date,
+                                InvoiceId = invoice.InvoiceId,
+                                Date = invoice.Date,                             
                                 Subtotal = invoice.Subtotal,
                                 Discount = invoice.Discount,
                                 GrandTotal = invoice.GrandTotal,
                                 Pay = invoice.Pay,
                                 Due = invoice.Due,
                                 PaymentType = invoice.PaymentType,
-                                Slip = invoice.Slip
+                                Slip = invoice.Slip,
+                                ClientName = client.ClientName
                             }).ToList();
 
             return View(datalist);
         }
+        [Route("InvoiceDetails")]
+        public IActionResult InvoiceDetails(Guid id)
+        {
+            var invoice = _context.Invoice.FirstOrDefault(i => i.InvoiceId == id);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            return View(invoice); // pass invoice as model
+        }
+
 
     }
 }

@@ -15,6 +15,7 @@
         <table id="invoiceTable" class="table table-bordered table-hover">
             <thead class="bg-light">
                 <tr>
+                    <th>Invoice Number</th>
                     <th>Date</th>
                     <th>Subtotal</th>
                     <th>Discount</th>
@@ -22,28 +23,32 @@
                     <th>Pay</th>
                     <th>Due</th>
                     <th>Payment Type</th>
+                    <th>Client Name</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var invoice in Model)
+                @foreach (var invoice in Model.Select((value, index) => new { value, index }))
                 {
                     <tr>
-                     
-                        <td>@invoice.Date.ToString("yyyy-MM-dd")</td>
-                        <td>@invoice.Subtotal?.ToString("0.00")</td>
-                        <td>@invoice.Discount.ToString("0.00")</td>
-                        <td>@invoice.GrandTotal?.ToString("0.00")</td>
-                        <td>@invoice.Pay.ToString("0.00")</td>
-                        <td>@invoice.Due.ToString("0.00")</td>
-                        <td>@invoice.PaymentType</td>
+                        <!-- Numbering column -->
+                        <td>@(invoice.index + 1)</td> <!-- Row number, starts from 1 -->
+
+                        <td>@invoice.value.Date.ToString("yyyy-MM-dd")</td>
+                        <td>@invoice.value.Subtotal?.ToString("0.00")</td>
+                        <td>@invoice.value.Discount.ToString("0.00")</td>
+                        <td>@invoice.value.GrandTotal?.ToString("0.00")</td>
+                        <td>@invoice.value.Pay.ToString("0.00")</td>
+                        <td>@invoice.value.Due.ToString("0.00")</td>
+                        <td>@invoice.value.PaymentType</td>
+                        <td>@invoice.value.ClientName</td>
                         <td>
-                            <a href="@Url.Action("Details", "Invoice", new { id = invoice.InvoiceId })" class="btn btn-xs btn-primary me-1">View</a>
-                            <a href="@Url.Action("Delete", "Invoice", new { id = invoice.InvoiceId })" class="btn btn-xs btn-danger">Delete</a>
+                            <a href="@Url.Action("InvoiceDetails", "Invoice", new { id = invoice.value.InvoiceId })" class="btn btn-xs btn-primary me-1">View</a>
                         </td>
                     </tr>
                 }
             </tbody>
+
         </table>
     </div>
 </div>
