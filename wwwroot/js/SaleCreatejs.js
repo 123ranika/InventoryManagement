@@ -546,7 +546,7 @@ function getInvoiceData(isPrint = false) {
         Pay: $('#Pay').val(),
         Date: $('#Date').val(),
         Discount: $('#ManualDiscount').val(),
-        PaymentType = $('input[name="paymentType"]:checked').val(),
+        PaymentType: $('input[name="paymentType"]:checked').val(),
 
 
 
