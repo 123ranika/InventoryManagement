@@ -168,7 +168,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
 
                 return Json(new { success = true, message = "Invoice processed successfully." });
             }
-            catch (Exception ex)
+            catch
             {
                 return Json(new { success = false, message = "An error occurred while processing the invoice." });
             }
