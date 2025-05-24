@@ -18,24 +18,28 @@
 
             <!-- Vendor Name -->
             <div class="form-group mb-3">
+                <label asp-for="VendorName" class="form-label">Name</label>
                 <input name="VendorName" value="@Model.VendorName" class="form-control" placeholder="Enter vendor name" />
                 <span asp-validation-for="VendorName" class="text-danger"></span>
             </div>
 
             <!-- Phone -->
             <div class="form-group mb-3">
+                <label asp-for="Phone" class="form-label">Phone</label>
                 <input name="Phone" value="@Model.Phone" class="form-control" placeholder="Enter phone number" />
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
 
             <!-- Email -->
             <div class="form-group mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
                 <input name="Email" value="@Model.Email" class="form-control" placeholder="Enter email address" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <!-- Address -->
             <div class="form-group mb-3">
+                <label asp-for="Address" class="form-label">Address</label>
                 <textarea name="Address" class="form-control" rows="3" placeholder="Enter address">@Model.Address</textarea>
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
