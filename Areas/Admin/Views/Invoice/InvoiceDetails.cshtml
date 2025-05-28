@@ -10,7 +10,7 @@
     </div>
     <div class="card-body">
         <table class="table table-bordered">
-            <tr><th>Invoice ID</th><td>@Model.InvoiceId</td></tr>
+            @* <tr><th>Invoice ID</th><td>@Model.InvoiceId</td></tr> *@
             <tr><th>Date</th><td>@Model.Date.ToString("yyyy-MM-dd")</td></tr>
             <tr><th>Grand Total</th><td>@Model.GrandTotal?.ToString("0.00")</td></tr>
             <tr><th>Payment Type</th><td>@Model.PaymentType</td></tr>

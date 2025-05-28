@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css" />
 
 <div class="card card-primary">
-    <div class="card-header bg-info text-white">
-        <h3 class="card-title">Invoice List</h3>
+    <div class="card-header text-white" style="background-color:#717171">
+        <h3 class="card-title">Sale List</h3>
     </div>
     <div class="card-body">
         <table id="invoiceTable" class="table table-bordered table-hover">
@@ -43,7 +43,7 @@
                         <td>@invoice.value.PaymentType</td>
                         <td>@invoice.value.ClientName</td>
                         <td>
-                            <a href="@Url.Action("InvoiceDetails", "Invoice", new { id = invoice.value.InvoiceId })" class="btn btn-xs btn-primary me-1">View</a>
+                            <a href="@Url.Action("InvoiceDetails", "Invoice", new { id = invoice.value.InvoiceId })" class="btn btn-xs btn-success me-1">View</a>
                         </td>
                     </tr>
                 }

@@ -15,7 +15,8 @@
         <div class="card-body">
 
             <div class="mb-3">
-                <input asp-for="VendorName" id="VendorName" name="VendorName" class="form-control" placeholder="Enter vendor name" />
+                <input asp-for="VendorName" id="VendorName" name="VendorName" class="form-control" placeholder="Enter vendor name" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); showMessage('Only alphabets allowed', 'nameMsg')" />
+                <div id="nameMsg" class="text-warning small"></div>
                 <span asp-validation-for="VendorName" class="text-danger"></span>
             </div>
 
@@ -44,4 +45,12 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        function showMessage(msg, elementId) {
+            const el = document.getElementById(elementId);
+            el.innerText = msg;
+            setTimeout(() => el.innerText = '', 1500);
+        }
+    </script>
 }
