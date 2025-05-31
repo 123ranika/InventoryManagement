@@ -11,7 +11,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
     public class VendorController : Controller
     {
 
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context; //datbase connection
 
         public VendorController(ApplicationDbContext context)
         {
@@ -25,7 +25,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
         }
 
         [HttpPost("VendorCreateSubmit")]
-        public IActionResult VendorCreateSubmit(Vendors model)
+        public IActionResult VendorCreateSubmit(Vendors model) //method
         {
 
             if (model.VendorName!= null)
@@ -42,7 +42,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
              return RedirectToAction("VendorCreate");
         }
 
-        [Route("VendorEdit")]
+        [Route("VendorEdit")] //vendor edit e gele ,controller run
         public IActionResult VendorEdit(Guid id)
         {
             var data = _context.Vendors.Find(id);
@@ -74,7 +74,7 @@ namespace InventoryManagement.Areas.Admin.Controllers
         }
 
         [Route("VendorList")]
-        public IActionResult VendorList()
+        public IActionResult VendorList() //method
         {
             var datalist = _context.Vendors.ToList();
 

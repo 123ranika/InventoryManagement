@@ -1,5 +1,5 @@
 ﻿@using InventoryManagement.Models
-@model IEnumerable<LowStockProductVM>
+@model IEnumerable<LowStockProductVM> //get list
 
 @{
     ViewData["Title"] = "Low Stock Report";
@@ -13,7 +13,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Low Stock Threshold:</label>
         <div class="col-sm-4">
-            <input type="number" name="stockQty" value="@ViewBag.StockQty" class="form-control" />
+            <input type="number" name="stockQty" min="0" value="@ViewBag.StockQty" class="form-control" />
         </div>
         <div class="col-sm-2">
             <button type="submit" class="btn btn-primary">Filter</button>

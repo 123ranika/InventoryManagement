@@ -56,12 +56,10 @@
         function validateName(input) {
             const lastChar = input.value.slice(-1);
 
-            // If input is empty or last char is valid, do nothing
-            if (!lastChar || /^[a-zA-Z\s]$/.test(lastChar)) {
+            if (!lastChar || /^[a-zA-Z\s]$/.test(lastChar)) {     // last char valid - do nothing
                 return;
             }
 
-            // If invalid character, remove it and show warning
             input.value = input.value.slice(0, -1); // remove last char
             showMessage('Only alphabets and spaces allowed', 'nameMsg');
         }
@@ -69,12 +67,11 @@
             function validateNumber(input) {
             const lastChar = input.value.slice(-1);
 
-            // If input is empty or last character is valid digit, do nothing
             if (!lastChar || /^[0-9]$/.test(lastChar)) {
                 return;
             }
 
-            // If invalid character, remove it and show warning
+            // if invalid character, remove it and show msg
             input.value = input.value.slice(0, -1);
             showMessage('Only numbers allowed', 'phoneMsg');
         }
