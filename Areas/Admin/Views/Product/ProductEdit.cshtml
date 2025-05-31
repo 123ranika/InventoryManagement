@@ -20,7 +20,8 @@
             <!-- Product Name -->
             <div class="form-group mb-3">
                 <label asp-for="ProductName" class="form-label">Product Name</label>
-                <input name="ProductName" value="@Model.ProductName" class="form-control" placeholder="Enter product name" />
+                <input name="ProductName" value="@Model.ProductName" class="form-control" placeholder="Enter product name" oninput="validateName(this)" />
+                <div id="nameMsg" class="text-warning small"></div>
                 <span asp-validation-for="ProductName" class="text-danger"></span>
             </div>
 
@@ -57,7 +58,8 @@
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Price" class="form-label">Price</label>
-                    <input name="Price" value="@Model.Price" type="number" min="0" step="1" class="form-control" placeholder="Sell price" />
+                    <input name="Price" value="@Model.Price" type="number" min="0" step="1" class="form-control" placeholder="Sell price" oninput="validateNumber(this)" />
+                    <div id="priceMsg" class="text-warning small"></div>
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
             </div>
@@ -93,4 +95,37 @@
         });
     </script>
     @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        function showMessage(msg, elementId) {
+            const el = document.getElementById(elementId);
+            el.innerText = msg;
+            setTimeout(() => el.innerText = '', 1500);
+        }
+
+        function validateName(input) {
+            const lastChar = input.value.slice(-1);
+
+            // If input is empty or last char is valid, do nothing
+            if (!lastChar || /^[a-zA-Z\s]$/.test(lastChar)) {
+                return;
+            }
+
+            // If invalid character, remove it and show warning
+            input.value = input.value.slice(0, -1); // remove last char
+            showMessage('Only alphabets and spaces allowed', 'nameMsg');
+        }
+
+            function validateNumber(input) {
+            const lastChar = input.value.slice(-1);
+
+            // If input is empty or last character is valid digit, do nothing
+            if (!lastChar || /^[0-9]$/.test(lastChar)) {
+                return;
+            }
+
+            // If invalid character, remove it and show warning
+            input.value = input.value.slice(0, -1);
+            showMessage('Only numbers allowed', 'phoneMsg');
+        }
+    </script>
 }

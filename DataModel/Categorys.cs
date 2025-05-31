@@ -6,6 +6,7 @@ namespace InventoryManagement.DataModel
     {
         [Key]
         public Guid CategoryID { get; set; }
+        [RegularExpression(@"^[a-zA-Z\s]+$")]
         public string? CategoryName { get; set; }
     }
 }

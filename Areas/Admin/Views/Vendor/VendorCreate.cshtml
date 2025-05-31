@@ -2,12 +2,12 @@
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Create Vendor";
+    ViewData["Title"] = "Add Vendor";
 }
 
 <div class="card card-primary mt-4 mx-auto" style="max-width: 600px;">
     <div class="card-header" style="background-color:#717171">
-        <h3 class="card-title text-white">Create Vendor</h3>
+        <h3 class="card-title text-white">Add Vendor</h3>
     </div>
 
     <!-- Correct form routing -->
@@ -15,13 +15,14 @@
         <div class="card-body">
 
             <div class="mb-3">
-                <input asp-for="VendorName" id="VendorName" name="VendorName" class="form-control" placeholder="Enter vendor name" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); showMessage('Only alphabets allowed', 'nameMsg')" />
+                <input asp-for="VendorName" id="VendorName" name="VendorName" class="form-control" placeholder="Enter vendor name" oninput="validateName(this)" />
                 <div id="nameMsg" class="text-warning small"></div>
                 <span asp-validation-for="VendorName" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <input asp-for="Phone" id="Phone" name="Phone" class="form-control" placeholder="Enter phone number" />
+                <input asp-for="Phone" id="Phone" name="Phone" class="form-control" placeholder="Enter phone number" maxlength="11" oninput="validateNumber(this)" />
+                <div id="phoneMsg" class="text-warning small"></div>
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
 
@@ -45,12 +46,37 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
     <script>
         function showMessage(msg, elementId) {
             const el = document.getElementById(elementId);
             el.innerText = msg;
             setTimeout(() => el.innerText = '', 1500);
+        }
+
+        function validateName(input) {
+            const lastChar = input.value.slice(-1);
+
+            // If input is empty or last char is valid, do nothing
+            if (!lastChar || /^[a-zA-Z\s]$/.test(lastChar)) {
+                return;
+            }
+
+            // If invalid character, remove it and show warning
+            input.value = input.value.slice(0, -1); // remove last char
+            showMessage('Only alphabets and spaces allowed', 'nameMsg');
+        }
+
+            function validateNumber(input) {
+            const lastChar = input.value.slice(-1);
+
+            // If input is empty or last character is valid digit, do nothing
+            if (!lastChar || /^[0-9]$/.test(lastChar)) {
+                return;
+            }
+
+            // If invalid character, remove it and show warning
+            input.value = input.value.slice(0, -1);
+            showMessage('Only numbers allowed', 'phoneMsg');
         }
     </script>
 }
