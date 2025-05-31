@@ -212,6 +212,43 @@ namespace InventoryManagement.Areas.Admin.Controllers
             return View(invoice); // pass invoice as model
         }
 
+        [Route("SaleReport")]
+        public IActionResult SaleReport(DateTime? fdate, DateTime? tdate)
+        {
+            var query = from invoice in _context.Invoice
+                        join client in _context.Clients on invoice.ClientID equals client.ClientID
+                        select new InvoiceVM
+                        {
+                            InvoiceId = invoice.InvoiceId,
+                            Date = invoice.Date,
+                            Subtotal = invoice.Subtotal ?? 0,
+                            Discount = invoice.Discount,
+                            GrandTotal = invoice.GrandTotal ?? 0,
+                            Pay = invoice.Pay,
+                            Due = invoice.Due,
+                            PaymentType = invoice.PaymentType,
+                            Slip = invoice.Slip,
+                            ClientName = client.ClientName
+                        };
+
+            if (fdate.HasValue && tdate.HasValue)
+            {
+                query = query.Where(x => x.Date >= fdate.Value && x.Date <= tdate.Value);
+            }
+
+            var list = query.ToList();
+
+            ViewBag.FromDate = fdate?.ToString("yyyy-MM-dd");
+            ViewBag.ToDate = tdate?.ToString("yyyy-MM-dd");
+
+            ViewBag.TotalSubtotal = list.Sum(x => x.Subtotal);
+            ViewBag.TotalDiscount = list.Sum(x => x.Discount);
+            ViewBag.TotalPay = list.Sum(x => x.Pay);
+            ViewBag.TotalDue = list.Sum(x => x.Due);
+
+            return View(list);
+        }
+
 
     }
 }

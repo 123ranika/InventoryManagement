@@ -2,28 +2,62 @@
     ViewData["Title"] = "Admin";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Total Clients -->
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>@ViewBag.TotalClients</h3>
+                    <p>Total Clients</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="/Client/ClientList" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
 
-<!-- Default box -->
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Title</h3>
+        <!-- Total Vendors -->
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>@ViewBag.TotalVendor</h3>
+                    <p>Total Vendors</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <a href="/Vendor/VendorList" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
 
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                <i class="fas fa-times"></i>
-            </button>
+        <!-- Today's Sales -->
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>@ViewBag.TotalSalesToday</h3>
+                    <p>Today's Sales</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <a href="/Invoice/SaleList" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <!-- This Month's Sales -->
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-dark">
+                <div class="inner">
+                    <h3>@ViewBag.TotalSalesThisMonth</h3>
+                    <p>This Month's Sales</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <a href="/Invoice/SaleList" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
         </div>
     </div>
-    <div class="card-body">
-        Start creating your amazing application!
-    </div>
-    <!-- /.card-body -->
-    <div class="card-footer">
-        Footer
-    </div>
-    <!-- /.card-footer-->
 </div>
-<!-- /.card -->

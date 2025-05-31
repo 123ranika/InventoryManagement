@@ -320,6 +320,7 @@ $(document).ready(function () {
         $('#Name').val(item.name || '');
         $('#Phone').val(item.phone || '');
         $('#Address').val(item.address || '');
+        $('#ManualDiscount').val(100);
         $('#suggestions').hide();
     }
     function populateProductSuggestion(item) {

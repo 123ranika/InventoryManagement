@@ -1,5 +1,6 @@
 ﻿using InventoryManagement.Data;
 using InventoryManagement.DataModel;
+using InventoryManagement.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -114,6 +115,28 @@ namespace InventoryManagement.Areas.Admin.Controllers
             }
 
             return RedirectToAction("ProductList");
+        }
+
+
+        [HttpGet("LowStockReport")]
+        public IActionResult LowStockReport(int? stockQty)
+        {
+            int threshold = stockQty ?? 10;
+
+            var lowStockProducts = (from p in _context.Products
+                                    join v in _context.Vendors
+                                    on p.VendorID equals v.VendorID
+                                    where p.Quantity <= threshold
+                                    select new LowStockProductVM
+                                    {
+                                        ProductId = p.ProductID,
+                                        ProductName = p.ProductName,
+                                        Quantity = p.Quantity,
+                                        VendorName = v.VendorName
+                                    }).ToList();
+
+            ViewBag.StockQty = threshold;
+            return View(lowStockProducts);
         }
     }
 }
